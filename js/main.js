@@ -20,3 +20,24 @@ function getRandomIntInclusive(min, max) {
 }
 
 getRandomIntInclusive(10, -10);
+
+function getRandomFloatInclusive(min, max, precision) {
+  if (min < 0 || max < 0) {
+    return;
+  }
+
+  if (max === min) {
+    return min;
+  }
+
+  if (max < min) {
+    const temp = min;
+    min = max;
+    max = temp;
+  }
+
+  precision = Math.pow(10, precision);
+  return Math.round((Math.random() * (max - min) + min) * precision) / precision;
+}
+
+getRandomFloatInclusive(1.1, 9.7, 8);
