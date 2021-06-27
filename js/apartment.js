@@ -19,7 +19,7 @@ function fillApartmentAddress(apartment, address) {
 function fillApartmentPrice(apartment, price) {
   const apartmentPrice = apartment.querySelector('.popup__text--price');
   if (price) {
-    apartmentPrice.textContent = price + ' ';
+    apartmentPrice.textContent = `${price  } `;
     apartmentPrice.insertAdjacentHTML('beforeend', '<span>₽/ночь</span>');
   } else {
     apartmentPrice.classList.add('hidden');
@@ -52,7 +52,7 @@ function fillApartmentType(apartment, type) {
 function fillApartmentCapacity(apartment, rooms, guests) {
   const apartmentCapacity = apartment.querySelector('.popup__text--capacity');
   if (rooms && guests) {
-    apartmentCapacity.textContent = rooms + ' комнаты для ' + guests + ' гостей';
+    apartmentCapacity.textContent = `${rooms  } комнаты для ${  guests  } гостей`;
   } else {
     apartmentCapacity.classList.add('hidden');
   }
@@ -61,7 +61,7 @@ function fillApartmentCapacity(apartment, rooms, guests) {
 function fillApartmentTime(apartment, checkin, checkout) {
   const apartmentTime = apartment.querySelector('.popup__text--time');
   if (checkin && checkout) {
-    apartmentTime.textContent = 'Заезд после ' + checkin + ', выезд до ' + checkout;
+    apartmentTime.textContent = `Заезд после ${  checkin  }, выезд до ${  checkout}`;
   } else {
     apartmentTime.classList.add('hidden');
   }
@@ -77,7 +77,7 @@ function fillApartmentFeatures(apartment, features) {
     features.forEach((feature) => {
       const featureElement = document.createElement('li');
       featureElement.classList.add('popup__feature');
-      featureElement.classList.add('popup__feature--' + feature);
+      featureElement.classList.add(`popup__feature--${  feature}`);
       apartmentFeatures.appendChild(featureElement);
     });
   } else {
