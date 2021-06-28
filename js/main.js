@@ -1,9 +1,9 @@
-import {createApartmentAd} from './data.js';
-import {getApartmentCards} from './apartment.js';
+import {createAd} from './data.js';
+import {getCards} from './card.js';
 
-const SIMILAR_APARTMENTS_AD_COUNT = 10;
+const SIMILAR_AD_COUNT = 10;
 
-const similarApartmentAd = new Array(SIMILAR_APARTMENTS_AD_COUNT).fill(null).map(() => createApartmentAd());
-const similarListApartmentCards = getApartmentCards(similarApartmentAd);
+const similarAd = new Array(SIMILAR_AD_COUNT).fill(null).map(() => createAd());
+const similarListCards = getCards(similarAd);
 const mapCanvas = document.querySelector('.map__canvas');
-mapCanvas.appendChild(similarListApartmentCards.querySelector('.popup'));
+mapCanvas.appendChild(similarListCards.querySelector('.popup'));
