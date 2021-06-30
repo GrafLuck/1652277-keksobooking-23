@@ -11,7 +11,7 @@ const MAX_NUMBER_ROOMS = 100;
 const MIN_NUMBER_GUESTS = 1;
 const MAX_NUMBER_GUESTS = 100;
 
-const TYPES_APARTMENTS = [
+const TYPES = [
   'palace',
   'flat',
   'house',
@@ -34,22 +34,22 @@ const FEATURES = [
   'conditioner',
 ];
 
-const PHOTOS_APARTMENTS = [
+const PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/duonguyen-8LrGtIxxa4w.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-function getPhotosApartments() {
+function getPhotos() {
   const arrayPhotos = [];
   // Верхняя граница 2, а не 1, используется для повышения вероятности входа в цикл (увеличения количества фотографий)
   while (getRandomIntInclusive(0, 2)) {
-    arrayPhotos.push(PHOTOS_APARTMENTS[getRandomIntInclusive(0, PHOTOS_APARTMENTS.length - 1)]);
+    arrayPhotos.push(PHOTOS[getRandomIntInclusive(0, PHOTOS.length - 1)]);
   }
   return arrayPhotos;
 }
 
-function getFeaturesApartments() {
+function getFeatures() {
   const arrayFeatures = FEATURES.filter(() => {
     if (getRandomIntInclusive(0, 1)) {
       return true;
@@ -66,19 +66,19 @@ function createLocation() {
   };
 }
 
-function createOffer(apartmentAd) {
+function createOffer(ad) {
   return {
     title: 'Лучшее предложение для вашего отдыха',
-    address: `${apartmentAd.location.lat  }, ${  apartmentAd.location.lng}`,
+    address: `${ad.location.lat  }, ${  ad.location.lng}`,
     price: getRandomIntInclusive(MIN_PRICE, MAX_PRICE),
-    type: TYPES_APARTMENTS[getRandomIntInclusive(0, TYPES_APARTMENTS.length - 1)],
+    type: TYPES[getRandomIntInclusive(0, TYPES.length - 1)],
     rooms: getRandomIntInclusive(MIN_NUMBER_ROOMS, MAX_NUMBER_ROOMS),
     guests: getRandomIntInclusive(MIN_NUMBER_GUESTS, MAX_NUMBER_GUESTS),
     checkin: TIME[getRandomIntInclusive(0, TIME.length - 1)],
     checkout: TIME[getRandomIntInclusive(0, TIME.length - 1)],
-    features: getFeaturesApartments(),
+    features: getFeatures(),
     description: 'Эксклюзивное большое помещение для приема многочисленных гостей',
-    photos: getPhotosApartments(),
+    photos: getPhotos(),
   };
 }
 
@@ -88,12 +88,12 @@ function createAuthor() {
   };
 }
 
-function createApartmentAd() {
-  const apartmentAd = {};
-  apartmentAd.location = createLocation();
-  apartmentAd.offer = createOffer(apartmentAd);
-  apartmentAd.author = createAuthor();
-  return apartmentAd;
+function createAd() {
+  const ad = {};
+  ad.location = createLocation();
+  ad.offer = createOffer(ad);
+  ad.author = createAuthor();
+  return ad;
 }
 
-export {createApartmentAd};
+export {createAd};
