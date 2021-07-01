@@ -1,4 +1,4 @@
-import { validateForm, validateRooms, validateType, validateTime, validateTitle, validatePrice } from './form.js';
+import { validateForm, validateRoomsAndCapacity, validateType, validateTime, validateTitle, validatePrice } from './form.js';
 import {createAd} from './data.js';
 import {getCards} from './card.js';
 
@@ -11,7 +11,7 @@ mapCanvas.appendChild(similarListCards.querySelector('.popup'));
 
 validateForm();
 validateTitle();
-validateRooms();
+validateRoomsAndCapacity();
 validateType();
 validateTime();
 validatePrice();

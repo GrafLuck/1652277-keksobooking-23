@@ -83,11 +83,12 @@ function validateType() {
   });
 }
 
-function validateRooms() {
+function validateRoomsAndCapacity() {
   const roomNumberSelect = document.querySelector('#room_number');
   const roomNumberSelectOptions = roomNumberSelect.querySelectorAll('option');
   const capacitySelect = document.querySelector('#capacity');
   const capacitySelectOptions = capacitySelect.querySelectorAll('option');
+
   roomNumberSelect.addEventListener('change', () => {
     const roomNumberSelectIndex = roomNumberSelect.selectedIndex;
     const roomNumberSelectOptionValue = Number.parseInt(roomNumberSelectOptions[roomNumberSelectIndex].value, 10);
@@ -107,6 +108,19 @@ function validateRooms() {
         capacity.hidden = false;
       }
     });
+  });
+
+  capacitySelect.addEventListener('change', () => {
+    const roomNumberSelectIndex = roomNumberSelect.selectedIndex;
+    const roomNumberSelectOptionValue = Number.parseInt(roomNumberSelectOptions[roomNumberSelectIndex].value, 10);
+    const capacityArray = ROOMS_TO_CAPACITY[roomNumberSelectOptionValue];
+
+    if (capacityArray.indexOf(Number.parseInt(capacitySelect.selectedOptions[0].value, 10)) === -1) {
+      capacitySelect.setCustomValidity('Недопустимое число гостей');
+    } else {
+      capacitySelect.setCustomValidity('');
+    }
+    capacitySelect.reportValidity();
   });
 }
 
@@ -147,4 +161,4 @@ function validateForm() {
   document.removeEventListener('DOMContentLoaded', onLoadPage());
 }
 
-export {validateForm, validateRooms, validateType, validateTime, validateTitle, validatePrice};
+export {validateForm, validateRoomsAndCapacity, validateType, validateTime, validateTitle, validatePrice};
