@@ -7,7 +7,7 @@ const ROOMS_TO_CAPACITY = {
   2: [1, 2],
   3: [1, 2, 3],
   100: [0],
-}
+};
 
 function validateTitle() {
   const titleInput = document.querySelector('#title');
@@ -32,8 +32,8 @@ function validatePrice() {
     const value = priceInput.value;
     if (!isFinite(value) || value > MAX_PRICE_VALUE) {
       priceInput.setCustomValidity(`В поле требуется ввести число до ${ MAX_PRICE_VALUE }`);
-    } else if (value < price.min) {
-      priceInput.setCustomValidity(`Цена должна быть не меньше ${ price.min }`);
+    } else if (value < priceInput.min) {
+      priceInput.setCustomValidity(`Цена должна быть не меньше ${ priceInput.min }`);
     } else {
       priceInput.setCustomValidity('');
     }
@@ -126,11 +126,6 @@ function validateTime() {
   });
 }
 
-function validateForm() {
-  document.addEventListener('DOMContentLoaded', onLoadPage());
-  document.removeEventListener('DOMContentLoaded', onLoadPage());
-}
-
 function onLoadPage() {
   const roomNumberSelect = document.querySelector('#room_number');
   const roomNumberValue = Number.parseInt(roomNumberSelect.selectedOptions[0].value, 10);
@@ -145,6 +140,11 @@ function onLoadPage() {
       capacity.hidden = false;
     }
   });
+}
+
+function validateForm() {
+  document.addEventListener('DOMContentLoaded', onLoadPage());
+  document.removeEventListener('DOMContentLoaded', onLoadPage());
 }
 
 export {validateForm, validateRooms, validateType, validateTime, validateTitle, validatePrice};
