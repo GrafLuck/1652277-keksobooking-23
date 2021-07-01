@@ -1,69 +1,112 @@
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
+const MAX_PRICE_VALUE = 1000000;
+
+const ROOMS_TO_CAPACITY = {
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0],
+}
+
+function validateTitle() {
+  const titleInput = document.querySelector('#title');
+  titleInput.addEventListener('input', () => {
+    const valueLength = titleInput.value.length;
+
+    if (valueLength < MIN_TITLE_LENGTH) {
+      titleInput.setCustomValidity(`Ещё ${  MIN_TITLE_LENGTH - valueLength } симв.`);
+    } else if (valueLength > MAX_TITLE_LENGTH) {
+      titleInput.setCustomValidity(`Удалите лишние ${  valueLength - MAX_TITLE_LENGTH } симв.`);
+    } else {
+      titleInput.setCustomValidity('');
+    }
+
+    titleInput.reportValidity();
+  });
+}
+
+function validatePrice() {
+  const priceInput = document.querySelector('#price');
+  priceInput.addEventListener('input', () => {
+    const value = priceInput.value;
+    if (!isFinite(value) || value > MAX_PRICE_VALUE) {
+      priceInput.setCustomValidity(`В поле требуется ввести число до ${ MAX_PRICE_VALUE }`);
+    } else if (value < price.min) {
+      priceInput.setCustomValidity(`Цена должна быть не меньше ${ price.min }`);
+    } else {
+      priceInput.setCustomValidity('');
+    }
+    priceInput.reportValidity();
+  });
+
+}
 
 function validateType() {
-  const typesApartment = document.querySelector('#type');
-  const optionsTypesApartment = typesApartment.querySelectorAll('option');
-  const price = document.querySelector('#price');
-  typesApartment.addEventListener('change', () => {
-    const typesApartmentIndex = typesApartment.selectedIndex;
-    const optionSelectTypeApartment = optionsTypesApartment[typesApartmentIndex].value;
-    switch (optionSelectTypeApartment) {
+  const typeSelect = document.querySelector('#type');
+  const typeSelectOptions = typeSelect.querySelectorAll('option');
+  const priceInput = document.querySelector('#price');
+  const priceValue = priceInput.value;
+  typeSelect.addEventListener('change', () => {
+    const typesSelectIndex = typeSelect.selectedIndex;
+    const typeSelectOptionValue = typeSelectOptions[typesSelectIndex].value;
+    switch (typeSelectOptionValue) {
       case 'bungalow':
-        price.placeholder = 0;
-        price.min = 0;
+        priceInput.placeholder = 0;
+        priceInput.min = 0;
         break;
       case 'flat':
-        price.placeholder = 1000;
-        price.min = 1000;
+        priceInput.placeholder = 1000;
+        priceInput.min = 1000;
         break;
       case 'hotel':
-        price.placeholder = 3000;
-        price.min = 3000;
+        priceInput.placeholder = 3000;
+        priceInput.min = 3000;
         break;
       case 'house':
-        price.placeholder = 5000;
-        price.min = 5000;
+        priceInput.placeholder = 5000;
+        priceInput.min = 5000;
         break;
       case 'palace':
-        price.placeholder = 10000;
-        price.min = 10000;
+        priceInput.placeholder = 10000;
+        priceInput.min = 10000;
         break;
     }
+
+    if (priceValue !== '' &&  priceValue < priceInput.min) {
+      priceInput.setCustomValidity(`Цена должна быть не меньше ${ priceInput.min }`);
+    } else {
+      priceInput.setCustomValidity('');
+    }
+
+    priceInput.reportValidity();
   });
 }
 
 function validateRooms() {
-  const roomNumber = document.querySelector('#room_number');
-  const optionsRoomNumber = roomNumber.querySelectorAll('option');
-  const capacity = document.querySelector('#capacity');
-  const optionsCapacity = capacity.querySelectorAll('option');
-  roomNumber.addEventListener('change', () => {
-    const roomNumberIndex = roomNumber.selectedIndex;
-    const optionSelectRoomNumber = Number.parseInt(optionsRoomNumber[roomNumberIndex].value);
-    for (let i = 0; i < optionsCapacity.length; i++) {
-      if (optionSelectRoomNumber !== 100) {
-        if (Number.parseInt(optionsCapacity[i].value) > optionSelectRoomNumber || Number.parseInt(optionsCapacity[i].value) === 0) {
-          optionsCapacity[i].hidden = true;
-          switch (optionSelectRoomNumber) {
-            case 1:
-              optionsCapacity[2].selected = true;
-              break;
-            case 2:
-              optionsCapacity[1].selected = true;
-              break;
-            case 3:
-              optionsCapacity[0].selected = true;
-              break;
-          }
-        } else {
-          optionsCapacity[i].hidden = false;
-        }
-      } else if (Number.parseInt(optionsCapacity[i].value) === 0) {
-        optionsCapacity[i].hidden = false;
-      } else {
-        optionsCapacity[i].hidden = true;
-        optionsCapacity[3].selected = true;
-      }
+  const roomNumberSelect = document.querySelector('#room_number');
+  const roomNumberSelectOptions = roomNumberSelect.querySelectorAll('option');
+  const capacitySelect = document.querySelector('#capacity');
+  const capacitySelectOptions = capacitySelect.querySelectorAll('option');
+  roomNumberSelect.addEventListener('change', () => {
+    const roomNumberSelectIndex = roomNumberSelect.selectedIndex;
+    const roomNumberSelectOptionValue = Number.parseInt(roomNumberSelectOptions[roomNumberSelectIndex].value, 10);
+    const capacityArray = ROOMS_TO_CAPACITY[roomNumberSelectOptionValue];
+
+    if (capacityArray.indexOf(Number.parseInt(capacitySelect.selectedOptions[0].value, 10)) === -1) {
+      capacitySelect.setCustomValidity('Недопустимое число гостей');
+    } else {
+      capacitySelect.setCustomValidity('');
     }
+    capacitySelect.reportValidity();
+
+    capacitySelectOptions.forEach((capacity) => {
+      if (capacityArray.indexOf(Number.parseInt(capacity.value, 10)) === -1) {
+        capacity.hidden = true;
+      } else {
+        capacity.hidden = false;
+      }
+    });
   });
 }
 
@@ -83,4 +126,25 @@ function validateTime() {
   });
 }
 
-export {validateRooms, validateType, validateTime};
+function validateForm() {
+  document.addEventListener('DOMContentLoaded', onLoadPage());
+  document.removeEventListener('DOMContentLoaded', onLoadPage());
+}
+
+function onLoadPage() {
+  const roomNumberSelect = document.querySelector('#room_number');
+  const roomNumberValue = Number.parseInt(roomNumberSelect.selectedOptions[0].value, 10);
+  const capacityArray = ROOMS_TO_CAPACITY[roomNumberValue];
+  const capacitySelect = document.querySelector('#capacity');
+  const capacitySelectOptions = capacitySelect.querySelectorAll('option');
+
+  capacitySelectOptions.forEach((capacity) => {
+    if (capacityArray.indexOf(Number.parseInt(capacity.value, 10)) === -1) {
+      capacity.hidden = true;
+    } else {
+      capacity.hidden = false;
+    }
+  });
+}
+
+export {validateForm, validateRooms, validateType, validateTime, validateTitle, validatePrice};

@@ -1,25 +1,18 @@
-import {createApartmentAd} from './data.js';
-import {getApartmentCards} from './apartment.js';
-import { validateRooms, validateType, validateTime } from './form.js';
+import { validateForm, validateRooms, validateType, validateTime, validateTitle, validatePrice } from './form.js';
+import {createAd} from './data.js';
+import {getCards} from './card.js';
 
-const SIMILAR_APARTMENTS_AD_COUNT = 10;
+const SIMILAR_AD_COUNT = 10;
 
-const similarApartmentAd = new Array(SIMILAR_APARTMENTS_AD_COUNT).fill(null).map(() => createApartmentAd());
-const similarListApartmentCards = getApartmentCards(similarApartmentAd);
+const similarAd = new Array(SIMILAR_AD_COUNT).fill(null).map(() => createAd());
+const similarListCards = getCards(similarAd);
 const mapCanvas = document.querySelector('.map__canvas');
-mapCanvas.appendChild(similarListApartmentCards.querySelector('.popup'));
+mapCanvas.appendChild(similarListCards.querySelector('.popup'));
 
+validateForm();
+validateTitle();
 validateRooms();
 validateType();
 validateTime();
+validatePrice();
 
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('!!!');
-  const capacity = document.querySelector('#capacity');
-  const optionsCapacity = capacity.querySelectorAll('option');
-  optionsCapacity.forEach((option) => {
-    if (option.selected === false) {
-      option.hidden = true;
-    }
-  });
-});
