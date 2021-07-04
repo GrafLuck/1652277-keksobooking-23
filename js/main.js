@@ -1,6 +1,7 @@
 import { createAd } from './data.js';
 import { getCards } from './card.js';
 import { deactivateForm, activateForm } from './form.js';
+import { validateForm, validateRoomsAndCapacity, validateType, validateTime, validateTitle, validatePrice } from './form.js';
 
 const SIMILAR_AD_COUNT = 10;
 
@@ -13,3 +14,11 @@ mapCanvas.appendChild(similarListCards.querySelector('.popup'));
 
 
 activateForm();
+
+validateForm();
+validateTitle();
+validateRoomsAndCapacity();
+validateType();
+validateTime();
+validatePrice();
+
