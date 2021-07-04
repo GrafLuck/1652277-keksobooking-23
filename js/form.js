@@ -1,3 +1,5 @@
+import {getDefaultCoordinate} from './map.js';
+
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE_VALUE = 1000000;
@@ -8,6 +10,11 @@ const ROOMS_TO_CAPACITY = {
   3: [1, 2, 3],
   100: [0],
 };
+
+function fillAddress(coordinate) {
+  const addressInput = document.querySelector('#address');
+  addressInput.value = ` ${ coordinate.lat.toFixed(5) } , ${ coordinate.lng.toFixed(5) }`;
+}
 
 function deactivateForm() {
   const adForm = document.querySelector('.ad-form');
@@ -43,6 +50,9 @@ function activateForm() {
     select.disabled = false;
   });
   mapFilterFieldset.disabled = false;
+
+  const defaultCoordinate = getDefaultCoordinate();
+  fillAddress(defaultCoordinate);
 }
 
 function validateTitle() {
@@ -197,5 +207,5 @@ function validateForm() {
   document.removeEventListener('DOMContentLoaded', onLoadPage());
 }
 
-export {deactivateForm, activateForm};
+export {deactivateForm, activateForm, fillAddress};
 export {validateForm, validateRoomsAndCapacity, validateType, validateTime, validateTitle, validatePrice};
