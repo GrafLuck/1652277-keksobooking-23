@@ -55,6 +55,8 @@ function addMarker(map) {
     const coordinate = evt.target.getLatLng();
     fillAddress(coordinate);
   });
+
+  return mainPinMarker;
 }
 
 function createMarker(map, point) {
@@ -85,4 +87,11 @@ function createMarker(map, point) {
     );
 }
 
-export {createMap, addMarker, createMarker, getDefaultCoordinate};
+function resetCoordinateMarker(mainPinMarker) {
+  mainPinMarker.setLatLng({
+    lat: DEFAULT_LAT,
+    lng: DEFAULT_LNG,
+  });
+}
+
+export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker};

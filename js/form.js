@@ -1,4 +1,5 @@
-import {getDefaultCoordinate} from './map.js';
+import {getDefaultCoordinate, resetCoordinateMarker} from './map.js';
+import { isEscEvent } from './util.js';
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
@@ -11,13 +12,57 @@ const ROOMS_TO_CAPACITY = {
   100: [0],
 };
 
+const IMAGE_FILE_TYPES = [
+  "image/apng",
+  "image/bmp",
+  "image/gif",
+  "image/jpeg",
+  "image/pjpeg",
+  "image/png",
+  "image/svg+xml",
+  "image/tiff",
+  "image/webp",
+  "image/x-icon"
+];
+
+const INDEX_DEFAULT_TYPE = 1;
+
+const adForm = document.querySelector('.ad-form');
+const titleInput = adForm.querySelector('#title');
+const priceInput = adForm.querySelector('#price');
+const addressInput = adForm.querySelector('#address');
+const typeSelect = adForm.querySelector('#type');
+const typeSelectOptions = typeSelect.querySelectorAll('option');
+const timeIn = document.querySelector('#timein');
+const timeOut = document.querySelector('#timeout');
+const optionTimeIn = timeIn.querySelectorAll('option');
+const optionTimeOut = timeOut.querySelectorAll('option');
+
+function validFileType(file) {
+  return IMAGE_FILE_TYPES.includes(file.type);
+}
+
+function initialFormToDefaultValue(mainMarker) {
+
+  titleInput.value = '';
+
+  priceInput.value = '';
+  priceInput.placeholder = 1000;
+  priceInput.min = 1000;
+
+  typeSelectOptions[INDEX_DEFAULT_TYPE].selected = true;
+
+  optionTimeIn[0].selected = true;
+  optionTimeOut[0].selected = true;
+
+  // resetCoordinateMarker(mainMarker);
+}
+
 function fillAddress(coordinate) {
-  const addressInput = document.querySelector('#address');
   addressInput.value = ` ${ coordinate.lat.toFixed(5) }, ${ coordinate.lng.toFixed(5) }`;
 }
 
 function deactivateForm() {
-  const adForm = document.querySelector('.ad-form');
   adForm.classList.add('ad-form--disabled');
   const fieldsetsForm = adForm.querySelectorAll('fieldset');
   fieldsetsForm.forEach((fieldset) => {
@@ -53,10 +98,10 @@ function activateForm() {
 
   const defaultCoordinate = getDefaultCoordinate();
   fillAddress(defaultCoordinate);
+  initialCapacitySelectForm();
 }
 
 function validateTitle() {
-  const titleInput = document.querySelector('#title');
   titleInput.addEventListener('input', () => {
     const valueLength = titleInput.value.length;
 
@@ -73,7 +118,6 @@ function validateTitle() {
 }
 
 function validatePrice() {
-  const priceInput = document.querySelector('#price');
   priceInput.addEventListener('input', () => {
     const value = priceInput.value;
     if (!isFinite(value) || value > MAX_PRICE_VALUE) {
@@ -89,9 +133,7 @@ function validatePrice() {
 }
 
 function validateType() {
-  const typeSelect = document.querySelector('#type');
   const typeSelectOptions = typeSelect.querySelectorAll('option');
-  const priceInput = document.querySelector('#price');
   const priceValue = priceInput.value;
   typeSelect.addEventListener('change', () => {
     const typesSelectIndex = typeSelect.selectedIndex;
@@ -186,7 +228,7 @@ function validateTime() {
   });
 }
 
-function onLoadPage() {
+function initialCapacitySelectForm() {
   const roomNumberSelect = document.querySelector('#room_number');
   const roomNumberValue = Number.parseInt(roomNumberSelect.selectedOptions[0].value, 10);
   const capacityArray = ROOMS_TO_CAPACITY[roomNumberValue];
@@ -203,12 +245,6 @@ function onLoadPage() {
 }
 
 function validateForm() {
-  document.addEventListener('DOMContentLoaded', onLoadPage());
-  document.removeEventListener('DOMContentLoaded', onLoadPage());
-}
-
-function validateFormOnSubmit() {
-
   validateTitle();
   validatePrice();
   validateType();
@@ -216,5 +252,80 @@ function validateFormOnSubmit() {
   validateTime();
 }
 
-export {deactivateForm, activateForm, fillAddress};
-export {validateForm, validateRoomsAndCapacity, validateType, validateTime, validateTitle, validatePrice};
+function validateTypeFile() {
+  const imagesInput = document.querySelector('#images');
+  const avatarInput = document.querySelector('#avatar');
+  const fileImage = imagesInput.files[0];
+  const avatarImage = avatarInput.files[0];
+  if (!validFileType(fileImage) || !validFileType(avatarImage)) {
+    return false;
+  }
+  return true;
+}
+
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
+const successMessage = successTemplate.cloneNode(true);
+
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+const errorMessage = errorTemplate.cloneNode(true);
+
+const body = document.querySelector('body');
+
+function onSuccess() {
+  openSuccessMessage();
+  initialFormToDefaultValue();
+}
+
+function onFail() {
+  openErrorMessage();
+}
+
+function openSuccessMessage() {
+  body.append(successMessage);
+  window.addEventListener('click', onSuccessMessageClick);
+  window.addEventListener('keydown', onSuccessMessageEscKeydown);
+}
+
+function openErrorMessage() {
+  body.append(errorMessage);
+  window.addEventListener('click', onErrorMessageClick);
+  window.addEventListener('keydown', onErrorMessageEscKeydown);
+}
+
+function closeSuccessMessage() {
+  window.removeEventListener('click', onSuccessMessageClick);
+  window.removeEventListener('keydown', onSuccessMessageEscKeydown);
+}
+
+function closeErrorMessage() {
+  window.removeEventListener('click', onErrorMessageClick);
+  window.removeEventListener('keydown', onErrorMessageEscKeydown);
+}
+
+function onSuccessMessageClick() {
+  successMessage.remove();
+  closeSuccessMessage();
+}
+
+function onErrorMessageClick() {
+  errorMessage.remove();
+  closeErrorMessage();
+}
+
+function onSuccessMessageEscKeydown(evt) {
+  if (isEscEvent(evt)) {
+    evt.preventDefault();
+    successMessage.remove();
+  }
+}
+
+function onErrorMessageEscKeydown(evt) {
+  if (isEscEvent(evt)) {
+    evt.preventDefault();
+    errorMessage.remove();
+  }
+}
+
+export {onSuccess, onFail};
+export {deactivateForm, activateForm, fillAddress, initialFormToDefaultValue};
+export {validateForm};
