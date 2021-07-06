@@ -13,7 +13,7 @@ const ROOMS_TO_CAPACITY = {
 
 function fillAddress(coordinate) {
   const addressInput = document.querySelector('#address');
-  addressInput.value = ` ${ coordinate.lat.toFixed(5) } , ${ coordinate.lng.toFixed(5) }`;
+  addressInput.value = ` ${ coordinate.lat.toFixed(5) }, ${ coordinate.lng.toFixed(5) }`;
 }
 
 function deactivateForm() {
@@ -205,6 +205,15 @@ function onLoadPage() {
 function validateForm() {
   document.addEventListener('DOMContentLoaded', onLoadPage());
   document.removeEventListener('DOMContentLoaded', onLoadPage());
+}
+
+function validateFormOnSubmit() {
+
+  validateTitle();
+  validatePrice();
+  validateType();
+  validateRoomsAndCapacity();
+  validateTime();
 }
 
 export {deactivateForm, activateForm, fillAddress};

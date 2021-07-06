@@ -1,16 +1,20 @@
-import { createAd } from './data.js';
-import { deactivateForm } from './form.js';
+import { deactivateForm, validateFormOnClient } from './form.js';
 import { validateForm, validateRoomsAndCapacity, validateType, validateTime, validateTitle, validatePrice } from './form.js';
 import { addMarker, createMap, createMarker } from './map.js';
+import { getData, sendData } from './network.js';
 
-const SIMILAR_AD_COUNT = 10;
+const NUMBER_MARKERS_ON_MAP = 10;
 
 deactivateForm();
 
 const map = createMap();
 addMarker(map);
 
-const similarAd = new Array(SIMILAR_AD_COUNT).fill(null).map(() => createAd());
+getData((ads) => {
+    for (let i = 0; i < NUMBER_MARKERS_ON_MAP; i++) {
+      createMarker(map, ads[i]);
+    }
+});
 
 validateForm();
 validateTitle();
@@ -19,7 +23,23 @@ validateType();
 validateTime();
 validatePrice();
 
-similarAd.forEach((ad) => {
-  createMarker(map, ad);
+function onFail() {
+  console.log('Ошибка')
+}
+
+function onSuccess() {
+  console.log('Успех');
+}
+
+const adForm = document.querySelector('.ad-form');
+adForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  if (!validateFormOnClient()) {
+    return;
+  }
+  sendData(onSuccess, onFail, new FormData(evt.target));
 });
 
+function returnToInitialValue() {
+
+}
