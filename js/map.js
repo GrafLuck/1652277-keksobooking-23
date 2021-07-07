@@ -4,6 +4,8 @@ import { getCard } from './card.js';
 const DEFAULT_LAT = 35.68950;
 const DEFAULT_LNG = 139.69171;
 
+let mainPinMarker;
+
 function getDefaultCoordinate() {
   return {
     lat: DEFAULT_LAT,
@@ -38,7 +40,7 @@ function addMarker(map) {
     iconAnchor: [26, 52],
   });
 
-  const mainPinMarker = L.marker(
+  mainPinMarker = L.marker(
     {
       lat: DEFAULT_LAT,
       lng: DEFAULT_LNG,
@@ -87,11 +89,12 @@ function createMarker(map, point) {
     );
 }
 
-function resetCoordinateMarker(mainPinMarker) {
+function resetCoordinateMarker() {
   mainPinMarker.setLatLng({
     lat: DEFAULT_LAT,
     lng: DEFAULT_LNG,
   });
+  return mainPinMarker.getLatLng();
 }
 
 export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker};

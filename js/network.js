@@ -2,8 +2,22 @@ function getData(onSuccess) {
   fetch('https://23.javascript.pages.academy/keksobooking/data')
     .then((response) => response.json())
     .then((ads) => {
+      console.log(ads);
       onSuccess(ads);
     });
+    // fetch('https://23.javascript.pages.academy/keksobooking/data')
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       console.log(response);
+    //       console.log(response.json());
+    //     } else {
+    //       // onFail();
+    //     }
+    //   })
+    //   .then((ads) => {
+    //     console.log(ads);
+    //     onSuccess(ads);
+    //   });
 };
 
 function sendData(onSuccess, onFail, body) {
@@ -28,20 +42,5 @@ function sendData(onSuccess, onFail, body) {
       onFail();
     });
 };
-
-// fetch(
-//   'https://23.javascript.pages.academy/keksobooking',
-//   {
-//     method: 'POST',
-//     // headers: {
-//     //   'Content-Type': 'multipart/form-data',
-//     // },
-//     // mode: 'same-origin',
-//     body: new FormData(evt.target),
-//   })
-//   .then((response) => response.json())
-//   .then((json) => {
-//     returnToInitialValue();
-//   });
 
 export {getData, sendData};

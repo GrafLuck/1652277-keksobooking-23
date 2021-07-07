@@ -37,12 +37,35 @@ const timeIn = document.querySelector('#timein');
 const timeOut = document.querySelector('#timeout');
 const optionTimeIn = timeIn.querySelectorAll('option');
 const optionTimeOut = timeOut.querySelectorAll('option');
+const roomNumberSelect = document.querySelector('#room_number');
+const roomNumberSelectOptions = roomNumberSelect.querySelectorAll('option');
+const capacitySelect = document.querySelector('#capacity');
+const capacitySelectOptions = capacitySelect.querySelectorAll('option');
+const imagesInput = document.querySelector('#images');
+const avatarInput = document.querySelector('#avatar');
+const descriptionTextarea = document.querySelector('#description');
+const featuresCheckbox = document.querySelectorAll('.features__checkbox');
+
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
+const successMessage = successTemplate.cloneNode(true);
+
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+const errorMessage = errorTemplate.cloneNode(true);
+const errorButton = errorTemplate.querySelector('.error__button');
+
+const body = document.querySelector('body');
+
+const fileImageLabel = document.querySelector('.ad-form__drop-zone');
+const avatarImageLabel = document.querySelector('.ad-form-header__drop-zone');
 
 function validFileType(file) {
   return IMAGE_FILE_TYPES.includes(file.type);
 }
 
-function initialFormToDefaultValue(mainMarker) {
+function initialFormToDefaultValue() {
+
+  avatarInput.files = undefined;
+  imagesInput.files = undefined;
 
   titleInput.value = '';
 
@@ -55,7 +78,18 @@ function initialFormToDefaultValue(mainMarker) {
   optionTimeIn[0].selected = true;
   optionTimeOut[0].selected = true;
 
-  // resetCoordinateMarker(mainMarker);
+  roomNumberSelectOptions[0].selected = true;
+
+  initialCapacitySelectForm();
+  capacitySelectOptions[2].selected = true;
+
+  descriptionTextarea.value = '';
+  featuresCheckbox.forEach((feature) => {
+    feature.checked = false;
+  })
+
+  const coordinate = resetCoordinateMarker();
+  fillAddress(coordinate);
 }
 
 function fillAddress(coordinate) {
@@ -99,141 +133,186 @@ function activateForm() {
   const defaultCoordinate = getDefaultCoordinate();
   fillAddress(defaultCoordinate);
   initialCapacitySelectForm();
+  startFormEventListener();
+}
+
+function validateFieldForm() {
+  let isValid = true;
+  if (!onValidateTitle()) {
+    titleInput.style.borderColor = 'red';
+    isValid = false;
+  }
+  if (!onValidatePrice()) {
+    priceInput.style.borderColor = 'red';
+    isValid = false;
+  }
+  if(!onValidateRoomNumber() || !onValidateCapacity()) {
+    capacitySelect.style.borderColor = 'red';
+    isValid = false;
+  }
+  const fileImage = imagesInput.files[0];
+  const avatarImage = avatarInput.files[0];
+  if (fileImage && !validFileType(fileImage)) {
+    fileImageLabel.style.borderColor = 'red';
+    isValid = false;
+  }
+  if (avatarImage && !validFileType(avatarImage)) {
+    avatarImageLabel.style.borderColor = 'red';
+    isValid = false;
+  }
+  return isValid;
 }
 
 function validateTitle() {
-  titleInput.addEventListener('input', () => {
-    const valueLength = titleInput.value.length;
+  titleInput.addEventListener('input', onValidateTitle);
+}
 
-    if (valueLength < MIN_TITLE_LENGTH) {
-      titleInput.setCustomValidity(`Ещё ${  MIN_TITLE_LENGTH - valueLength } симв.`);
-    } else if (valueLength > MAX_TITLE_LENGTH) {
-      titleInput.setCustomValidity(`Удалите лишние ${  valueLength - MAX_TITLE_LENGTH } симв.`);
-    } else {
-      titleInput.setCustomValidity('');
-    }
+function onValidateTitle() {
+  const valueLength = titleInput.value.length;
+  let isValid = true;
 
-    titleInput.reportValidity();
-  });
+  if (valueLength < MIN_TITLE_LENGTH) {
+    titleInput.setCustomValidity(`Ещё ${  MIN_TITLE_LENGTH - valueLength } симв.`);
+    isValid = false;
+  } else if (valueLength > MAX_TITLE_LENGTH) {
+    titleInput.setCustomValidity(`Удалите лишние ${  valueLength - MAX_TITLE_LENGTH } симв.`);
+    isValid = false;
+  } else {
+    titleInput.setCustomValidity('');
+  }
+
+  titleInput.reportValidity();
+  return isValid;
 }
 
 function validatePrice() {
-  priceInput.addEventListener('input', () => {
-    const value = priceInput.value;
-    if (!isFinite(value) || value > MAX_PRICE_VALUE) {
-      priceInput.setCustomValidity(`В поле требуется ввести число до ${ MAX_PRICE_VALUE }`);
-    } else if (value < priceInput.min) {
-      priceInput.setCustomValidity(`Цена должна быть не меньше ${ priceInput.min }`);
-    } else {
-      priceInput.setCustomValidity('');
-    }
-    priceInput.reportValidity();
-  });
+  priceInput.addEventListener('input', onValidatePrice);
+}
 
+function onValidatePrice() {
+  const value = priceInput.value;
+  let isValid = true;
+  if (!isFinite(value) || value > MAX_PRICE_VALUE) {
+    priceInput.setCustomValidity(`В поле требуется ввести число до ${ MAX_PRICE_VALUE }`);
+    isValid = false;
+  } else if (value < priceInput.min) {
+    priceInput.setCustomValidity(`Цена должна быть не меньше ${ priceInput.min }`);
+    isValid = false;
+  } else {
+    priceInput.setCustomValidity('');
+  }
+  priceInput.reportValidity();
+  return isValid;
 }
 
 function validateType() {
-  const typeSelectOptions = typeSelect.querySelectorAll('option');
+  typeSelect.addEventListener('change', onValidateType);
+}
+
+function onValidateType() {
+  const typesSelectIndex = typeSelect.selectedIndex;
+  const typeSelectOptionValue = typeSelectOptions[typesSelectIndex].value;
   const priceValue = priceInput.value;
-  typeSelect.addEventListener('change', () => {
-    const typesSelectIndex = typeSelect.selectedIndex;
-    const typeSelectOptionValue = typeSelectOptions[typesSelectIndex].value;
-    switch (typeSelectOptionValue) {
-      case 'bungalow':
-        priceInput.placeholder = 0;
-        priceInput.min = 0;
-        break;
-      case 'flat':
-        priceInput.placeholder = 1000;
-        priceInput.min = 1000;
-        break;
-      case 'hotel':
-        priceInput.placeholder = 3000;
-        priceInput.min = 3000;
-        break;
-      case 'house':
-        priceInput.placeholder = 5000;
-        priceInput.min = 5000;
-        break;
-      case 'palace':
-        priceInput.placeholder = 10000;
-        priceInput.min = 10000;
-        break;
-    }
+  let isValid = true;
+  switch (typeSelectOptionValue) {
+    case 'bungalow':
+      priceInput.placeholder = 0;
+      priceInput.min = 0;
+      break;
+    case 'flat':
+      priceInput.placeholder = 1000;
+      priceInput.min = 1000;
+      break;
+    case 'hotel':
+      priceInput.placeholder = 3000;
+      priceInput.min = 3000;
+      break;
+    case 'house':
+      priceInput.placeholder = 5000;
+      priceInput.min = 5000;
+      break;
+    case 'palace':
+      priceInput.placeholder = 10000;
+      priceInput.min = 10000;
+      break;
+  }
 
-    if (priceValue !== '' &&  priceValue < priceInput.min) {
-      priceInput.setCustomValidity(`Цена должна быть не меньше ${ priceInput.min }`);
-    } else {
-      priceInput.setCustomValidity('');
-    }
+  if (priceValue != '' &&  priceValue < priceInput.min) {
+    priceInput.setCustomValidity(`Цена должна быть не меньше ${ priceInput.min }`);
+    isValid = false;
+  } else {
+    priceInput.setCustomValidity('');
+  }
 
-    priceInput.reportValidity();
-  });
+  priceInput.reportValidity();
+  return isValid;
 }
 
 function validateRoomsAndCapacity() {
-  const roomNumberSelect = document.querySelector('#room_number');
-  const roomNumberSelectOptions = roomNumberSelect.querySelectorAll('option');
-  const capacitySelect = document.querySelector('#capacity');
-  const capacitySelectOptions = capacitySelect.querySelectorAll('option');
+  roomNumberSelect.addEventListener('change', onValidateRoomNumber);
+  capacitySelect.addEventListener('change', onValidateCapacity);
+}
 
-  roomNumberSelect.addEventListener('change', () => {
-    const roomNumberSelectIndex = roomNumberSelect.selectedIndex;
-    const roomNumberSelectOptionValue = Number.parseInt(roomNumberSelectOptions[roomNumberSelectIndex].value, 10);
-    const capacityArray = ROOMS_TO_CAPACITY[roomNumberSelectOptionValue];
+function onValidateRoomNumber() {
+  const roomNumberSelectIndex = roomNumberSelect.selectedIndex;
+  const roomNumberSelectOptionValue = Number.parseInt(roomNumberSelectOptions[roomNumberSelectIndex].value, 10);
+  const capacityArray = ROOMS_TO_CAPACITY[roomNumberSelectOptionValue];
+  let isValid = true;
 
-    if (capacityArray.indexOf(Number.parseInt(capacitySelect.selectedOptions[0].value, 10)) === -1) {
-      capacitySelect.setCustomValidity('Недопустимое число гостей');
+  if (capacityArray.indexOf(Number.parseInt(capacitySelect.selectedOptions[0].value, 10)) === -1) {
+    capacitySelect.setCustomValidity('Недопустимое число гостей');
+    isValid = false;
+  } else {
+    capacitySelect.setCustomValidity('');
+  }
+  capacitySelect.reportValidity();
+
+  capacitySelectOptions.forEach((capacity) => {
+    if (capacityArray.indexOf(Number.parseInt(capacity.value, 10)) === -1) {
+      capacity.hidden = true;
     } else {
-      capacitySelect.setCustomValidity('');
+      capacity.hidden = false;
     }
-    capacitySelect.reportValidity();
-
-    capacitySelectOptions.forEach((capacity) => {
-      if (capacityArray.indexOf(Number.parseInt(capacity.value, 10)) === -1) {
-        capacity.hidden = true;
-      } else {
-        capacity.hidden = false;
-      }
-    });
   });
 
-  capacitySelect.addEventListener('change', () => {
-    const roomNumberSelectIndex = roomNumberSelect.selectedIndex;
-    const roomNumberSelectOptionValue = Number.parseInt(roomNumberSelectOptions[roomNumberSelectIndex].value, 10);
-    const capacityArray = ROOMS_TO_CAPACITY[roomNumberSelectOptionValue];
+  return isValid;
+}
 
-    if (capacityArray.indexOf(Number.parseInt(capacitySelect.selectedOptions[0].value, 10)) === -1) {
-      capacitySelect.setCustomValidity('Недопустимое число гостей');
-    } else {
-      capacitySelect.setCustomValidity('');
-    }
-    capacitySelect.reportValidity();
-  });
+function onValidateCapacity() {
+  const roomNumberSelectIndex = roomNumberSelect.selectedIndex;
+  const roomNumberSelectOptionValue = Number.parseInt(roomNumberSelectOptions[roomNumberSelectIndex].value, 10);
+  const capacityArray = ROOMS_TO_CAPACITY[roomNumberSelectOptionValue];
+  let isValid = true;
+
+  if (capacityArray.indexOf(Number.parseInt(capacitySelect.selectedOptions[0].value, 10)) === -1) {
+    capacitySelect.setCustomValidity('Недопустимое число гостей');
+    isValid = false;
+  } else {
+    capacitySelect.setCustomValidity('');
+  }
+  capacitySelect.reportValidity();
+
+  return isValid;
 }
 
 function validateTime() {
-  const timeIn = document.querySelector('#timein');
-  const timeOut = document.querySelector('#timeout');
-  const optionTimeIn = timeIn.querySelectorAll('option');
-  const optionTimeOut = timeOut.querySelectorAll('option');
-  timeIn.addEventListener('change', () => {
-    const timeInIndex = timeIn.selectedIndex;
-    optionTimeOut[timeInIndex].selected = true;
-  });
+  timeIn.addEventListener('change', onValidateTimeIn);
+  timeOut.addEventListener('change', onValidateTimeOut);
+}
 
-  timeOut.addEventListener('change', () => {
-    const timeOutIndex = timeOut.selectedIndex;
-    optionTimeIn[timeOutIndex].selected = true;
-  });
+function onValidateTimeIn() {
+  const timeInIndex = timeIn.selectedIndex;
+  optionTimeOut[timeInIndex].selected = true;
+}
+
+function onValidateTimeOut() {
+  const timeOutIndex = timeOut.selectedIndex;
+  optionTimeIn[timeOutIndex].selected = true;
 }
 
 function initialCapacitySelectForm() {
-  const roomNumberSelect = document.querySelector('#room_number');
   const roomNumberValue = Number.parseInt(roomNumberSelect.selectedOptions[0].value, 10);
   const capacityArray = ROOMS_TO_CAPACITY[roomNumberValue];
-  const capacitySelect = document.querySelector('#capacity');
-  const capacitySelectOptions = capacitySelect.querySelectorAll('option');
 
   capacitySelectOptions.forEach((capacity) => {
     if (capacityArray.indexOf(Number.parseInt(capacity.value, 10)) === -1) {
@@ -244,32 +323,13 @@ function initialCapacitySelectForm() {
   });
 }
 
-function validateForm() {
+function startFormEventListener() {
   validateTitle();
   validatePrice();
   validateType();
   validateRoomsAndCapacity();
   validateTime();
 }
-
-function validateTypeFile() {
-  const imagesInput = document.querySelector('#images');
-  const avatarInput = document.querySelector('#avatar');
-  const fileImage = imagesInput.files[0];
-  const avatarImage = avatarInput.files[0];
-  if (!validFileType(fileImage) || !validFileType(avatarImage)) {
-    return false;
-  }
-  return true;
-}
-
-const successTemplate = document.querySelector('#success').content.querySelector('.success');
-const successMessage = successTemplate.cloneNode(true);
-
-const errorTemplate = document.querySelector('#error').content.querySelector('.error');
-const errorMessage = errorTemplate.cloneNode(true);
-
-const body = document.querySelector('body');
 
 function onSuccess() {
   openSuccessMessage();
@@ -290,6 +350,7 @@ function openErrorMessage() {
   body.append(errorMessage);
   window.addEventListener('click', onErrorMessageClick);
   window.addEventListener('keydown', onErrorMessageEscKeydown);
+  errorButton.addEventListener('click', onErrorMessageClick);
 }
 
 function closeSuccessMessage() {
@@ -300,6 +361,7 @@ function closeSuccessMessage() {
 function closeErrorMessage() {
   window.removeEventListener('click', onErrorMessageClick);
   window.removeEventListener('keydown', onErrorMessageEscKeydown);
+  errorButton.addEventListener('click', onErrorMessageClick);
 }
 
 function onSuccessMessageClick() {
@@ -328,4 +390,4 @@ function onErrorMessageEscKeydown(evt) {
 
 export {onSuccess, onFail};
 export {deactivateForm, activateForm, fillAddress, initialFormToDefaultValue};
-export {validateForm};
+export {validateFieldForm};

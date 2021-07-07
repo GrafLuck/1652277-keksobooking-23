@@ -1,5 +1,4 @@
-import { deactivateForm, initialFormToDefaultValue, onSuccess, onFail } from './form.js';
-import { validateForm } from './form.js';
+import { deactivateForm, initialFormToDefaultValue, onSuccess, onFail, validateFieldForm } from './form.js';
 import { addMarker, createMap, createMarker } from './map.js';
 import { getData, sendData } from './network.js';
 
@@ -16,12 +15,13 @@ getData((ads) => {
     }
 });
 
-validateForm();
-
 const adForm = document.querySelector('.ad-form');
+adForm.noValidate = true;
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  sendData(onSuccess, onFail, new FormData(evt.target));
+  if (validateFieldForm()) {
+    sendData(onSuccess, onFail, new FormData(evt.target));
+  }
 });
 
 adForm.addEventListener('reset', (evt) => {
