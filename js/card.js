@@ -121,37 +121,32 @@ function fillAvatar(card, avatar) {
   }
 }
 
-function getCards(similarAd) {
+function getCard(ad) {
   const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-  const cardsFragment = document.createDocumentFragment();
 
-  similarAd.forEach((ad) => {
-    const card = cardTemplate.cloneNode(true);
+  const card = cardTemplate.cloneNode(true);
 
-    fillTitle(card, ad.offer.title);
+  fillTitle(card, ad.offer.title);
 
-    fillAddress(card, ad.offer.address);
+  fillAddress(card, ad.offer.address);
 
-    fillPrice(card, ad.offer.price);
+  fillPrice(card, ad.offer.price);
 
-    fillType(card, ad.offer.type);
+  fillType(card, ad.offer.type);
 
-    fillCapacity(card, ad.offer.rooms, ad.offer.guests);
+  fillCapacity(card, ad.offer.rooms, ad.offer.guests);
 
-    fillTime(card, ad.offer.checkin, ad.offer.checkout);
+  fillTime(card, ad.offer.checkin, ad.offer.checkout);
 
-    fillFeatures(card, ad.offer.features);
+  fillFeatures(card, ad.offer.features);
 
-    fillDescription(card, ad.offer.description);
+  fillDescription(card, ad.offer.description);
 
-    fillPhotos(card, ad.offer.photos);
+  fillPhotos(card, ad.offer.photos);
 
-    fillAvatar(card, ad.author.avatar);
+  fillAvatar(card, ad.author.avatar);
 
-    cardsFragment.appendChild(card);
-  });
-
-  return cardsFragment;
+  return card;
 }
 
-export {getCards};
+export {getCard};
