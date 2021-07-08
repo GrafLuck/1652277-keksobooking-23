@@ -1,5 +1,5 @@
-function getData(onSuccess) {
-  fetch('https://23.javascript.pages.academy/keksobooking/data')
+function getData(onSuccess, onFail) {
+  fetch('https://23.javascript.pages.academy/keksobooking/data2')
     .then((response) => {
       if (response.ok) {
         return response;
@@ -8,10 +8,9 @@ function getData(onSuccess) {
     })
     .then((response) => response.json())
     .then((ads) => {
-      console.log(ads);
       onSuccess(ads);
     })
-    .catch((error) => console.log(error));
+    .catch((error) => onFail(error));
 };
 
 function sendData(onSuccess, onFail, body) {

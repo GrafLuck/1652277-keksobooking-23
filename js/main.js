@@ -1,19 +1,17 @@
 import { deactivateForm, initialFormToDefaultValue, onSuccess, onFail, validateFieldForm } from './form.js';
-import { addMarker, createMap, createMarker } from './map.js';
+import { addMarker, createMap } from './map.js';
+import { onSuccessGetData, onFailGetData } from './map.js';
 import { getData, sendData } from './network.js';
-
-const NUMBER_MARKERS_ON_MAP = 10;
 
 deactivateForm();
 
 const map = createMap();
-const mainMarker = addMarker(map);
+addMarker(map);
 
-getData((ads) => {
-    for (let i = 0; i < NUMBER_MARKERS_ON_MAP; i++) {
-      createMarker(map, ads[i]);
-    }
-});
+getData(
+  (ads) => {onSuccessGetData(map, ads);},
+  (error) => {onFailGetData(error);}
+);
 
 const adForm = document.querySelector('.ad-form');
 adForm.noValidate = true;
