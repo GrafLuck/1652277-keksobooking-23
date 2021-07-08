@@ -10,7 +10,7 @@ addMarker(map);
 
 getData(
   (ads) => {onSuccessGetData(map, ads);},
-  (error) => {onFailGetData(error);}
+  (error) => {onFailGetData(error);},
 );
 
 const adForm = document.querySelector('.ad-form');

@@ -1,4 +1,4 @@
-import { activateForm, fillAddress, onSuccess } from './form.js';
+import { activateForm, fillAddress } from './form.js';
 import { getCard } from './card.js';
 
 const DEFAULT_LAT = 35.68950;
@@ -99,8 +99,8 @@ function resetCoordinateMarker() {
 }
 
 function onSuccessGetData(map, ads) {
-  for (let i = 0; i < NUMBER_MARKERS_ON_MAP; i++) {
-    createMarker(map, ads[i]);
+  for (let identifier = 0; identifier < NUMBER_MARKERS_ON_MAP; identifier++) {
+    createMarker(map, ads[identifier]);
   }
 }
 
@@ -109,7 +109,7 @@ function onFailGetData(error) {
   const errorGetDataTemplate = document.querySelector('#error-data').content.querySelector('.error-data');
   const errorGetDataDiv = errorGetDataTemplate.cloneNode(true);
   const errorGetDataMessage = errorGetDataDiv.querySelector('.error-data__message');
-  errorGetDataMessage.textContent = 'Ошибка при получении данных с сервера (' + error + ')';
+  errorGetDataMessage.textContent = `Ошибка при получении данных с сервера ( ${error} )`;
   body.append(errorGetDataDiv);
   setTimeout(() => {
     errorGetDataDiv.remove();

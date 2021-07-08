@@ -11,7 +11,7 @@ function getData(onSuccess, onFail) {
       onSuccess(ads);
     })
     .catch((error) => onFail(error));
-};
+}
 
 function sendData(onSuccess, onFail, body) {
   fetch(
@@ -34,6 +34,6 @@ function sendData(onSuccess, onFail, body) {
     .catch(() => {
       onFail();
     });
-};
+}
 
 export {getData, sendData};
