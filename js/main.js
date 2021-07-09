@@ -1,25 +1,28 @@
-import { createAd } from './data.js';
-import { deactivateForm } from './form.js';
-import { validateForm, validateRoomsAndCapacity, validateType, validateTime, validateTitle, validatePrice } from './form.js';
-import { addMarker, createMap, createMarker } from './map.js';
-
-const SIMILAR_AD_COUNT = 10;
+import { deactivateForm, initialFormToDefaultValue, onSuccess, onFail, validateFieldForm } from './form.js';
+import { addMarker, createMap } from './map.js';
+import { onSuccessGetData, onFailGetData } from './map.js';
+import { getData, sendData } from './network.js';
 
 deactivateForm();
 
 const map = createMap();
 addMarker(map);
 
-const similarAd = new Array(SIMILAR_AD_COUNT).fill(null).map(() => createAd());
+getData(
+  (ads) => {onSuccessGetData(map, ads);},
+  (error) => {onFailGetData(error);},
+);
 
-validateForm();
-validateTitle();
-validateRoomsAndCapacity();
-validateType();
-validateTime();
-validatePrice();
-
-similarAd.forEach((ad) => {
-  createMarker(map, ad);
+const adForm = document.querySelector('.ad-form');
+adForm.noValidate = true;
+adForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  if (validateFieldForm()) {
+    sendData(onSuccess, onFail, new FormData(evt.target));
+  }
 });
 
+adForm.addEventListener('reset', (evt) => {
+  evt.preventDefault();
+  initialFormToDefaultValue();
+});

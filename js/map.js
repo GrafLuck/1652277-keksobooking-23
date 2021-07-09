@@ -3,6 +3,9 @@ import { getCard } from './card.js';
 
 const DEFAULT_LAT = 35.68950;
 const DEFAULT_LNG = 139.69171;
+const NUMBER_MARKERS_ON_MAP = 10;
+
+let mainPinMarker;
 
 function getDefaultCoordinate() {
   return {
@@ -38,7 +41,7 @@ function addMarker(map) {
     iconAnchor: [26, 52],
   });
 
-  const mainPinMarker = L.marker(
+  mainPinMarker = L.marker(
     {
       lat: DEFAULT_LAT,
       lng: DEFAULT_LNG,
@@ -55,6 +58,8 @@ function addMarker(map) {
     const coordinate = evt.target.getLatLng();
     fillAddress(coordinate);
   });
+
+  return mainPinMarker;
 }
 
 function createMarker(map, point) {
@@ -85,4 +90,31 @@ function createMarker(map, point) {
     );
 }
 
-export {createMap, addMarker, createMarker, getDefaultCoordinate};
+function resetCoordinateMarker() {
+  mainPinMarker.setLatLng({
+    lat: DEFAULT_LAT,
+    lng: DEFAULT_LNG,
+  });
+  return mainPinMarker.getLatLng();
+}
+
+function onSuccessGetData(map, ads) {
+  for (let identifier = 0; identifier < NUMBER_MARKERS_ON_MAP; identifier++) {
+    createMarker(map, ads[identifier]);
+  }
+}
+
+function onFailGetData(error) {
+  const body = document.querySelector('body');
+  const errorGetDataTemplate = document.querySelector('#error-data').content.querySelector('.error-data');
+  const errorGetDataDiv = errorGetDataTemplate.cloneNode(true);
+  const errorGetDataMessage = errorGetDataDiv.querySelector('.error-data__message');
+  errorGetDataMessage.textContent = `Ошибка при получении данных с сервера ( ${error} )`;
+  body.append(errorGetDataDiv);
+  setTimeout(() => {
+    errorGetDataDiv.remove();
+  }, 1500);
+}
+
+export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker};
+export {onSuccessGetData, onFailGetData};

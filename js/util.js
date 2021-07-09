@@ -38,4 +38,8 @@ function getRandomFloatInclusive(min, max, precision) {
   return Math.round((Math.random() * (max - min) + min) * precision) / precision;
 }
 
-export {getRandomIntInclusive, getRandomFloatInclusive};
+function isEscEvent(evt) {
+  return evt.key === 'Escape' || evt.key === 'Esc';
+}
+
+export {getRandomIntInclusive, getRandomFloatInclusive, isEscEvent};
