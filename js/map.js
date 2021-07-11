@@ -1,11 +1,13 @@
 import { activateForm, fillAddress } from './form.js';
 import { getCard } from './card.js';
+import { setFilteringByType, setFilteringByPrice, setFilteringByNumberOfRooms, setFilteringByNumberOfGuests, setFilteringByFeatures } from './filter.js';
 
 const DEFAULT_LAT = 35.68950;
 const DEFAULT_LNG = 139.69171;
 const NUMBER_MARKERS_ON_MAP = 10;
 
 let mainPinMarker;
+let markerGroup;
 
 function getDefaultCoordinate() {
   return {
@@ -30,6 +32,8 @@ function createMap() {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     },
   ).addTo(map);
+
+  markerGroup = L.layerGroup().addTo(map);
 
   return map;
 }
@@ -62,7 +66,7 @@ function addMarker(map) {
   return mainPinMarker;
 }
 
-function createMarker(map, point) {
+function createMarker(point) {
   const {lat, lng} = point.location;
 
   const icon = L.icon({
@@ -81,7 +85,7 @@ function createMarker(map, point) {
     },
   );
 
-  marker.addTo(map)
+  marker.addTo(markerGroup)
     .bindPopup(
       getCard(point),
       {
@@ -98,10 +102,22 @@ function resetCoordinateMarker() {
   return mainPinMarker.getLatLng();
 }
 
-function onSuccessGetData(map, ads) {
+function drawMarkersCallback(pointsArray) {
+  markerGroup.clearLayers();
+  pointsArray.forEach((ad) => {
+    createMarker(ad);
+  });
+}
+
+function onSuccessGetData(ads) {
   for (let identifier = 0; identifier < NUMBER_MARKERS_ON_MAP; identifier++) {
-    createMarker(map, ads[identifier]);
+    createMarker(ads[identifier]);
   }
+  setFilteringByType(ads, drawMarkersCallback);
+  setFilteringByPrice(ads, drawMarkersCallback);
+  setFilteringByNumberOfRooms(ads, drawMarkersCallback);
+  setFilteringByNumberOfGuests(ads, drawMarkersCallback);
+  setFilteringByFeatures(ads, drawMarkersCallback);
 }
 
 function onFailGetData(error) {

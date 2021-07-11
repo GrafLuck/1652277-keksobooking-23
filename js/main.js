@@ -9,7 +9,7 @@ const map = createMap();
 addMarker(map);
 
 getData(
-  (ads) => {onSuccessGetData(map, ads);},
+  (ads) => {onSuccessGetData(ads);},
   (error) => {onFailGetData(error);},
 );
 
