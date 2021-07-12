@@ -1,6 +1,6 @@
 import { activateForm, fillAddress } from './form.js';
 import { getCard } from './card.js';
-import { setFilteringByType, setFilteringByPrice, setFilteringByNumberOfRooms, setFilteringByNumberOfGuests, setFilteringByFeatures } from './filter.js';
+import { setFiltering } from './filter.js';
 
 const DEFAULT_LAT = 35.68950;
 const DEFAULT_LNG = 139.69171;
@@ -104,20 +104,34 @@ function resetCoordinateMarker() {
 
 function drawMarkersCallback(pointsArray) {
   markerGroup.clearLayers();
-  pointsArray.forEach((ad) => {
-    createMarker(ad);
+  pointsArray.forEach((point) => {
+    createMarker(point);
   });
 }
 
-function onSuccessGetData(ads) {
+function drawUnfilteredMarkers(ads) {
   for (let identifier = 0; identifier < NUMBER_MARKERS_ON_MAP; identifier++) {
     createMarker(ads[identifier]);
   }
-  setFilteringByType(ads, drawMarkersCallback);
-  setFilteringByPrice(ads, drawMarkersCallback);
-  setFilteringByNumberOfRooms(ads, drawMarkersCallback);
-  setFilteringByNumberOfGuests(ads, drawMarkersCallback);
-  setFilteringByFeatures(ads, drawMarkersCallback);
+}
+
+function returnDrawMarkersCallback() {
+  return drawMarkersCallback;
+}
+
+function onSuccessGetData(ads) {
+  drawUnfilteredMarkers(ads);
+
+  const mapFilters = document.querySelector('.map__filters');
+  mapFilters.classList.remove('map__filters--disabled');
+  const mapFilterSelects = mapFilters.querySelectorAll('select');
+  const mapFilterFieldset = mapFilters.querySelector('fieldset');
+  mapFilterSelects.forEach((select) => {
+    select.disabled = false;
+  });
+  mapFilterFieldset.disabled = false;
+
+  setFiltering(ads, drawMarkersCallback);
 }
 
 function onFailGetData(error) {
@@ -133,4 +147,4 @@ function onFailGetData(error) {
 }
 
 export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker};
-export {onSuccessGetData, onFailGetData};
+export {onSuccessGetData, onFailGetData, returnDrawMarkersCallback};

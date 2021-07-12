@@ -1,5 +1,7 @@
 import {getDefaultCoordinate, resetCoordinateMarker} from './map.js';
 import { isEscEvent } from './util.js';
+import { onSuccessGetData, onFailGetData } from './map.js';
+import { getData } from './network.js';
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
@@ -315,14 +317,10 @@ function activateForm() {
     fieldset.disabled = false;
   });
 
-  const mapFilters = document.querySelector('.map__filters');
-  mapFilters.classList.remove('map__filters--disabled');
-  const mapFilterSelects = mapFilters.querySelectorAll('select');
-  const mapFilterFieldset = mapFilters.querySelector('fieldset');
-  mapFilterSelects.forEach((select) => {
-    select.disabled = false;
-  });
-  mapFilterFieldset.disabled = false;
+  getData(
+    (ads) => {onSuccessGetData(ads);},
+    (error) => {onFailGetData(error);},
+  );
 
   const defaultCoordinate = getDefaultCoordinate();
   fillAddress(defaultCoordinate);
