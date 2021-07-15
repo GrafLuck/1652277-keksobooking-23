@@ -79,13 +79,14 @@ function onValidateTitle() {
 }
 
 function onValidatePrice() {
-  const value = priceInput.value;
+  const value = Number.parseInt(priceInput.value, 10);
   let isValid = true;
+  const minPrice = Number.parseInt(priceInput.min, 10);
   if (!isFinite(value) || value > MAX_PRICE_VALUE) {
     priceInput.setCustomValidity(`В поле требуется ввести число до ${ MAX_PRICE_VALUE }`);
     isValid = false;
-  } else if (value < priceInput.min) {
-    priceInput.setCustomValidity(`Цена должна быть не меньше ${ priceInput.min }`);
+  } else if (value < minPrice) {
+    priceInput.setCustomValidity(`Цена должна быть не меньше ${ minPrice }`);
     isValid = false;
   } else {
     priceInput.setCustomValidity('');
