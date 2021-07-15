@@ -1,3 +1,14 @@
+let listOfAd;
+
+function setListOfAd(ads) {
+  listOfAd = ads;
+  return listOfAd;
+}
+
+function getListOfAd() {
+  return listOfAd;
+}
+
 function getData(onSuccess, onFail) {
   fetch('https://23.javascript.pages.academy/keksobooking/data')
     .then((response) => {
@@ -9,6 +20,7 @@ function getData(onSuccess, onFail) {
     .then((response) => response.json())
     .then((ads) => {
       onSuccess(ads);
+      setListOfAd(ads);
     })
     .catch((error) => onFail(error));
 }
@@ -18,9 +30,6 @@ function sendData(onSuccess, onFail, body) {
     'https://23.javascript.pages.academy/keksobooking',
     {
       method: 'POST',
-      // headers: {
-      //   'Content-Type': 'multipart/form-data',
-      // },
       body,
     },
   )
@@ -36,4 +45,4 @@ function sendData(onSuccess, onFail, body) {
     });
 }
 
-export {getData, sendData};
+export {getData, sendData, getListOfAd};

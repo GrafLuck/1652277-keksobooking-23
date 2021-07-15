@@ -1,11 +1,13 @@
 import { activateForm, fillAddress } from './form.js';
 import { getCard } from './card.js';
+import { setFiltering } from './filter.js';
 
 const DEFAULT_LAT = 35.68950;
 const DEFAULT_LNG = 139.69171;
 const NUMBER_MARKERS_ON_MAP = 10;
 
 let mainPinMarker;
+let markerGroup;
 
 function getDefaultCoordinate() {
   return {
@@ -31,12 +33,14 @@ function createMap() {
     },
   ).addTo(map);
 
+  markerGroup = L.layerGroup().addTo(map);
+
   return map;
 }
 
 function addMarker(map) {
   const mainPinIcon = L.icon({
-    iconUrl: '../img/main-pin.svg',
+    iconUrl: 'img/main-pin.svg',
     iconSize: [52, 52],
     iconAnchor: [26, 52],
   });
@@ -62,11 +66,11 @@ function addMarker(map) {
   return mainPinMarker;
 }
 
-function createMarker(map, point) {
+function createMarker(point) {
   const {lat, lng} = point.location;
 
   const icon = L.icon({
-    iconUrl: '../img/pin.svg',
+    iconUrl: 'img/pin.svg',
     iconSize: [40, 40],
     iconAnchor: [20, 40],
   });
@@ -81,7 +85,7 @@ function createMarker(map, point) {
     },
   );
 
-  marker.addTo(map)
+  marker.addTo(markerGroup)
     .bindPopup(
       getCard(point),
       {
@@ -98,10 +102,36 @@ function resetCoordinateMarker() {
   return mainPinMarker.getLatLng();
 }
 
-function onSuccessGetData(map, ads) {
+function drawMarkersCallback(pointsArray) {
+  markerGroup.clearLayers();
+  pointsArray.forEach((point) => {
+    createMarker(point);
+  });
+}
+
+function drawUnfilteredMarkers(ads) {
   for (let identifier = 0; identifier < NUMBER_MARKERS_ON_MAP; identifier++) {
-    createMarker(map, ads[identifier]);
+    createMarker(ads[identifier]);
   }
+}
+
+function returnDrawMarkersCallback() {
+  return drawMarkersCallback;
+}
+
+function onSuccessGetData(ads) {
+  drawUnfilteredMarkers(ads);
+
+  const mapFilters = document.querySelector('.map__filters');
+  mapFilters.classList.remove('map__filters--disabled');
+  const mapFilterSelects = mapFilters.querySelectorAll('select');
+  const mapFilterFieldset = mapFilters.querySelector('fieldset');
+  mapFilterSelects.forEach((select) => {
+    select.disabled = false;
+  });
+  mapFilterFieldset.disabled = false;
+
+  setFiltering(ads, drawMarkersCallback);
 }
 
 function onFailGetData(error) {
@@ -116,5 +146,4 @@ function onFailGetData(error) {
   }, 1500);
 }
 
-export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker};
-export {onSuccessGetData, onFailGetData};
+export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker, onSuccessGetData, onFailGetData, returnDrawMarkersCallback};
