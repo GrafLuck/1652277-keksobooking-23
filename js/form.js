@@ -377,6 +377,4 @@ function onFail() {
   openErrorMessage();
 }
 
-export {onSuccess, onFail};
-export {deactivateForm, activateForm, fillAddress, initialFormToDefaultValue};
-export {validateFieldForm};
+export {onSuccess, onFail, deactivateForm, activateForm, fillAddress, initialFormToDefaultValue, validateFieldForm};

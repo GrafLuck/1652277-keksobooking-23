@@ -40,7 +40,7 @@ function createMap() {
 
 function addMarker(map) {
   const mainPinIcon = L.icon({
-    iconUrl: '../img/main-pin.svg',
+    iconUrl: 'img/main-pin.svg',
     iconSize: [52, 52],
     iconAnchor: [26, 52],
   });
@@ -70,7 +70,7 @@ function createMarker(point) {
   const {lat, lng} = point.location;
 
   const icon = L.icon({
-    iconUrl: '../img/pin.svg',
+    iconUrl: 'img/pin.svg',
     iconSize: [40, 40],
     iconAnchor: [20, 40],
   });
@@ -146,5 +146,4 @@ function onFailGetData(error) {
   }, 1500);
 }
 
-export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker};
-export {onSuccessGetData, onFailGetData, returnDrawMarkersCallback};
+export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker, onSuccessGetData, onFailGetData, returnDrawMarkersCallback};

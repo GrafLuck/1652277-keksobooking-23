@@ -30,9 +30,6 @@ function sendData(onSuccess, onFail, body) {
     'https://23.javascript.pages.academy/keksobooking',
     {
       method: 'POST',
-      // headers: {
-      //   'Content-Type': 'multipart/form-data',
-      // },
       body,
     },
   )
