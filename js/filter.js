@@ -1,6 +1,6 @@
 import {getListOfAd} from './network.js';
-import { returnDrawMarkersCallback } from './map.js';
-import { debounce } from './utils/debounce.js';
+import { returnDrawMarkersCallback, getNumberMarkersOnMap } from './map.js';
+import { debounce } from './util.js';
 
 const HOUSING_PRICE = {
   'any': [0, Infinity],
@@ -58,7 +58,7 @@ function onFilterChange(ads, cb) {
       resultArray.push(ad);
     }
   });
-  cb(resultArray.slice(0, 10));
+  cb(resultArray.slice(0, getNumberMarkersOnMap()));
 }
 
 function setFiltering(ads, cb) {

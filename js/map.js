@@ -9,6 +9,10 @@ const NUMBER_MARKERS_ON_MAP = 10;
 let mainPinMarker;
 let markerGroup;
 
+function getNumberMarkersOnMap() {
+  return NUMBER_MARKERS_ON_MAP;
+}
+
 function getDefaultCoordinate() {
   return {
     lat: DEFAULT_LAT,
@@ -94,6 +98,10 @@ function createMarker(point) {
     );
 }
 
+function closePopup() {
+  markerGroup.closePopup();
+}
+
 function resetCoordinateMarker() {
   mainPinMarker.setLatLng({
     lat: DEFAULT_LAT,
@@ -146,4 +154,4 @@ function onFailGetData(error) {
   }, 1500);
 }
 
-export {createMap, addMarker, createMarker, getDefaultCoordinate, resetCoordinateMarker, onSuccessGetData, onFailGetData, returnDrawMarkersCallback};
+export {createMap, addMarker, createMarker, closePopup, getDefaultCoordinate, resetCoordinateMarker, onSuccessGetData, onFailGetData, returnDrawMarkersCallback, getNumberMarkersOnMap};

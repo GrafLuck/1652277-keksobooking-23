@@ -1,6 +1,6 @@
 import {getDefaultCoordinate, resetCoordinateMarker} from './map.js';
 import { isEscEvent } from './util.js';
-import { onSuccessGetData, onFailGetData } from './map.js';
+import { onSuccessGetData, onFailGetData, closePopup } from './map.js';
 import { getData } from './network.js';
 
 const MIN_TITLE_LENGTH = 30;
@@ -12,6 +12,14 @@ const ROOMS_TO_CAPACITY = {
   2: [1, 2],
   3: [1, 2, 3],
   100: [0],
+};
+
+const MIN_PRICE_OF_TYPES = {
+  'bungalow': 0,
+  'flat': 1000,
+  'hotel': 3000,
+  'house': 5000,
+  'palace': 10000,
 };
 
 const IMAGE_FILE_TYPES = [
@@ -102,24 +110,24 @@ function onValidateType() {
   let isValid = true;
   switch (typeSelectOptionValue) {
     case 'bungalow':
-      priceInput.placeholder = 0;
-      priceInput.min = 0;
+      priceInput.placeholder = MIN_PRICE_OF_TYPES.bungalow;
+      priceInput.min = MIN_PRICE_OF_TYPES.bungalow;
       break;
     case 'flat':
-      priceInput.placeholder = 1000;
-      priceInput.min = 1000;
+      priceInput.placeholder = MIN_PRICE_OF_TYPES.flat;
+      priceInput.min = MIN_PRICE_OF_TYPES.flat;
       break;
     case 'hotel':
-      priceInput.placeholder = 3000;
-      priceInput.min = 3000;
+      priceInput.placeholder = MIN_PRICE_OF_TYPES.hotel;
+      priceInput.min = MIN_PRICE_OF_TYPES.hotel;
       break;
     case 'house':
-      priceInput.placeholder = 5000;
-      priceInput.min = 5000;
+      priceInput.placeholder = MIN_PRICE_OF_TYPES.house;
+      priceInput.min = MIN_PRICE_OF_TYPES.house;
       break;
     case 'palace':
-      priceInput.placeholder = 10000;
-      priceInput.min = 10000;
+      priceInput.placeholder = MIN_PRICE_OF_TYPES.palace;
+      priceInput.min = MIN_PRICE_OF_TYPES.palace;
       break;
   }
 
@@ -264,8 +272,8 @@ function initialFormToDefaultValue() {
   titleInput.value = '';
 
   priceInput.value = '';
-  priceInput.placeholder = 1000;
-  priceInput.min = 1000;
+  priceInput.placeholder = MIN_PRICE_OF_TYPES.flat;
+  priceInput.min = MIN_PRICE_OF_TYPES.flat;
 
   typeSelectOptions[INDEX_DEFAULT_TYPE].selected = true;
 
@@ -372,6 +380,7 @@ function openErrorMessage() {
 function onSuccess() {
   openSuccessMessage();
   initialFormToDefaultValue();
+  closePopup();
 }
 
 function onFail() {
