@@ -1,6 +1,6 @@
 import {getDefaultCoordinate, resetCoordinateMarker} from './map.js';
 import { isEscEvent } from './util.js';
-import { onSuccessGetData, onFailGetData, closePopup } from './map.js';
+import { onSuccessGetData, onFailGetData, closePopupOnMap } from './map.js';
 import { getData } from './network.js';
 
 const MIN_TITLE_LENGTH = 30;
@@ -353,6 +353,7 @@ function validateFieldForm() {
   }
   const fileImage = imagesInput.files[0];
   const avatarImage = avatarInput.files[0];
+
   if (fileImage && !validFileType(fileImage)) {
     fileImageLabel.style.borderColor = 'red';
     isValid = false;
@@ -378,12 +379,13 @@ function openErrorMessage() {
 }
 
 function onSuccess() {
+  closePopupOnMap();
   openSuccessMessage();
   initialFormToDefaultValue();
-  closePopup();
 }
 
 function onFail() {
+  closePopupOnMap();
   openErrorMessage();
 }
 

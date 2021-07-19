@@ -6,6 +6,7 @@ const DEFAULT_LAT = 35.68950;
 const DEFAULT_LNG = 139.69171;
 const NUMBER_MARKERS_ON_MAP = 10;
 
+let map;
 let mainPinMarker;
 let markerGroup;
 
@@ -21,7 +22,7 @@ function getDefaultCoordinate() {
 }
 
 function createMap() {
-  const map = L.map('map-canvas')
+  map = L.map('map-canvas')
     .on('load', () => {
       activateForm();
     })
@@ -42,7 +43,7 @@ function createMap() {
   return map;
 }
 
-function addMarker(map) {
+function addMarker() {
   const mainPinIcon = L.icon({
     iconUrl: 'img/main-pin.svg',
     iconSize: [52, 52],
@@ -98,8 +99,8 @@ function createMarker(point) {
     );
 }
 
-function closePopup() {
-  markerGroup.closePopup();
+function closePopupOnMap() {
+  map.closePopup();
 }
 
 function resetCoordinateMarker() {
@@ -154,4 +155,4 @@ function onFailGetData(error) {
   }, 1500);
 }
 
-export {createMap, addMarker, createMarker, closePopup, getDefaultCoordinate, resetCoordinateMarker, onSuccessGetData, onFailGetData, returnDrawMarkersCallback, getNumberMarkersOnMap};
+export {createMap, addMarker, createMarker, closePopupOnMap, getDefaultCoordinate, resetCoordinateMarker, onSuccessGetData, onFailGetData, returnDrawMarkersCallback, getNumberMarkersOnMap};

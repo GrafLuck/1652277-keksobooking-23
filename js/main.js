@@ -5,8 +5,8 @@ import { initialFilterToDefaultValue } from './filter.js';
 
 deactivateForm();
 
-const map = createMap();
-addMarker(map);
+createMap();
+addMarker();
 
 const adForm = document.querySelector('.ad-form');
 adForm.noValidate = true;
